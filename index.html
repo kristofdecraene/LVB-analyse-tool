@@ -81,7 +81,8 @@
             font-size: 0.9em;
             color: #555;
             display: block;
-            margin-top: 6px;
+            margin-top: 8px;
+            line-height: 1.4;
         }
         .help-text a {
             color: var(--vives-red);
@@ -90,6 +91,14 @@
         }
         .help-text a:hover {
             text-decoration: underline;
+        }
+        .info-box {
+            background-color: #fff0f4;
+            border-left: 4px solid var(--vives-red);
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 0 5px 5px 0;
+            font-size: 0.9em;
         }
         button {
             background-color: var(--vives-red);
@@ -169,11 +178,16 @@
         <div class="form-group">
             <label for="apiKey">Jouw Gemini API Key</label>
             <input type="password" id="apiKey" placeholder="Plak hier je Google Gemini API Key...">
-            <span class="help-text">
-                Je sleutel wordt veilig lokaal bewaard in deze browser en wordt nergens anders opgeslagen.<br>
-                <strong>Geen sleutel?</strong> <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Klik hier om een gratis Gemini API key aan te maken</a> (log in met je Google of VIVES-account en klik op 'Create API key').
-            </span>
+            
+            <div class="info-box">
+                <strong>Hoe maak je een gratis API-sleutel aan?</strong><br>
+                1. Klik op <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">deze link naar Google AI Studio</a>.<br>
+                2. Log in met een Google-account. <em>(Let op: Blokkeert je VIVES-mail de toegang? Gebruik dan gewoon een persoonlijk @gmail.com account!)</em><br>
+                3. Klik op de blauwe knop 'Create API key' (en eventueel op 'Create API key in new project').<br>
+                4. Kopieer de lange reeks letters en cijfers en plak deze hierboven. Je sleutel wordt uitsluitend lokaal in jouw browser bewaard.
+            </div>
         </div>
+        
         <div class="form-group">
             <label for="stageLevel">Stageniveau</label>
             <select id="stageLevel">
@@ -264,7 +278,7 @@
             const b64_PPT = await fileToBase64(filePPT);
             const b64_WB = await fileToBase64(fileWB);
 
-            // De uitgebreide, formatieve Systeemprompt met ingebakken VIVES-didactiek (Fiches 2 t.e.m. 8)
+            // De uitgebreide, formatieve Systeemprompt met ingebakken VIVES-didactiek
             const systemInstruction = `Jij bent een coachende, motiverende vakdidacticus geschiedenis en stagebegeleider (verbonden aan VIVES Hogeschool). Jouw taak is het geven van formatieve, opbouwende feedback op draftversies van stagevoorbereidingen. Jouw doel is de student te helpen om het lesmateriaal bij te sturen en te versterken vóór de definitieve indiening. Je velt géén finaal oordeel, maar reikt handvatten aan.
 
             Toon en Stijl:
@@ -327,7 +341,7 @@
             ### 9. Extra tips uit de 35-puntenchecklist
             * **Feedback:** [Geef hier nog max 2-3 extra, aanmoedigende tips (bv. timing, bordschema, taal) om de draft nog professioneler te maken.]`;
 
-            // Payload constructie voor Gemini 1.5 Pro
+            // Payload constructie voor Gemini 1.5 Pro met de juiste versie aanduiding
             const payload = {
                 systemInstruction: { parts: [{ text: systemInstruction }] },
                 contents: [{
@@ -347,8 +361,8 @@
                 } 
             };
 
-            // Call de Gemini API
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`, {
+            // Call de Gemini API met gemini-1.5-pro-latest (Verhelpt de API versioning fout)
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${apiKey}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
