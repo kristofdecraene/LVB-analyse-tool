@@ -323,6 +323,27 @@
         .feedback-section li:last-child {
             margin-bottom: 0;
         }
+
+        /* Disclaimer voettekst onderaan het rapport */
+        .disclaimer-box {
+            margin-top: 24px;
+            padding: 16px 20px;
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-left: 4px solid #64748b;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.88em;
+            color: #475569;
+            line-height: 1.5;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+        .disclaimer-box strong {
+            color: #1e293b;
+            display: block;
+            margin-bottom: 4px;
+        }
+
         .print-btn {
             background-color: var(--vives-dark);
             margin-top: 20px;
@@ -358,7 +379,7 @@
                 margin-bottom: 14px;
                 padding: 14px 18px;
             }
-            .badge, .summary-pill, .intro-block, #result-content th, .feedback-section {
+            .badge, .summary-pill, .intro-block, .disclaimer-box, #result-content th, .feedback-section {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
@@ -453,6 +474,10 @@
         </div>
         <div id="summary-bar" class="summary-pills"></div>
         <div id="result-content"></div>
+        <div class="disclaimer-box">
+            <strong>Over dit feedbackrapport (Mens – AI – Mens)</strong>
+            Dit rapport werd gegenereerd door een AI-coach die ik heb geprogrammeerd en grondig heb getest op basis van de VIVES-didactiek voor geschiedenis. Omdat dit specifieke rapport rechtstreeks door de AI is opgesteld zonder bijkomende menselijke eindcontrole, kan de analyse onnauwkeurigheden of blinde vlekken bevatten. Beschouw deze feedback daarom als een krachtig hulpmiddel om je draft scherp te stellen, maar weeg elk advies kritisch af tegen je eigen vakkennis en de VIVES-fiches. <em>(Kristof De Craene)</em>
+        </div>
         <button class="print-btn no-print" onclick="window.print()">Sla dit rapport op als PDF / Afdrukken</button>
     </div>
 </div>
