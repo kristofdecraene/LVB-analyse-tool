@@ -4,25 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VIVES - Didactische Coach Geschiedenis</title>
-    <!-- We gebruiken marked.js om de Markdown-output van Gemini mooi op te maken in HTML -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root {
             --vives-red: #E3004F;
-            --vives-dark: #333333;
-            --bg-color: #f4f7f6;
+            --vives-dark: #1e293b;
+            --bg-color: #f1f5f9;
             --card-bg: #ffffff;
+            --green-bg: #dcfce7;
+            --green-text: #166534;
+            --green-border: #22c55e;
+            --orange-bg: #fef3c7;
+            --orange-text: #92400e;
+            --orange-border: #f59e0b;
+            --red-bg: #fee2e2;
+            --red-text: #991b1b;
+            --red-border: #ef4444;
         }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background-color: var(--bg-color);
             color: var(--vives-dark);
             line-height: 1.6;
             margin: 0;
-            padding: 20px;
+            padding: 25px;
         }
         .container {
-            max-width: 900px;
+            max-width: 950px;
             margin: 0 auto;
         }
         .header {
@@ -32,107 +40,128 @@
         .header h1 {
             color: var(--vives-red);
             margin-bottom: 5px;
+            font-size: 2em;
+            letter-spacing: -0.5px;
         }
         .header p {
-            color: #666;
+            color: #64748b;
             font-size: 1.1em;
+            margin-top: 0;
         }
         .card {
             background-color: var(--card-bg);
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            padding: 28px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            margin-bottom: 24px;
         }
         h2 {
             margin-top: 0;
-            border-bottom: 2px solid var(--bg-color);
-            padding-bottom: 10px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 12px;
             color: var(--vives-dark);
+            font-size: 1.35em;
         }
         .form-group {
             margin-bottom: 20px;
         }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 650px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
         label {
             display: block;
-            font-weight: bold;
+            font-weight: 600;
             margin-bottom: 8px;
+            color: #334155;
         }
-        input[type="password"], select {
+        .optional-tag {
+            font-weight: normal;
+            font-size: 0.85em;
+            color: #64748b;
+        }
+        input[type="password"], input[type="text"], select {
             width: 100%;
             padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
             box-sizing: border-box;
-            font-size: 16px;
+            font-size: 15px;
+            background-color: #fff;
         }
         input[type="file"] {
             display: block;
             margin-top: 5px;
             padding: 12px;
-            background-color: var(--bg-color);
-            border: 1px dashed #ccc;
-            border-radius: 5px;
+            background-color: #f8fafc;
+            border: 1px dashed #94a3b8;
+            border-radius: 6px;
             width: 100%;
             box-sizing: border-box;
-            font-size: 15px;
+            font-size: 14px;
         }
         .help-text {
-            font-size: 0.9em;
-            color: #555;
+            font-size: 0.88em;
+            color: #64748b;
             display: block;
-            margin-top: 8px;
-            line-height: 1.4;
+            margin-top: 6px;
         }
-        .help-text a {
+        .info-box {
+            background-color: #fff1f2;
+            border-left: 4px solid var(--vives-red);
+            padding: 14px;
+            margin-top: 10px;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.9em;
+            color: #334155;
+        }
+        .info-box a {
             color: var(--vives-red);
             font-weight: bold;
             text-decoration: none;
         }
-        .help-text a:hover {
+        .info-box a:hover {
             text-decoration: underline;
-        }
-        .info-box {
-            background-color: #fff0f4;
-            border-left: 4px solid var(--vives-red);
-            padding: 12px;
-            margin-top: 10px;
-            border-radius: 0 5px 5px 0;
-            font-size: 0.9em;
         }
         button {
             background-color: var(--vives-red);
             color: white;
             border: none;
             padding: 15px 25px;
-            font-size: 18px;
-            border-radius: 5px;
+            font-size: 17px;
+            border-radius: 8px;
             cursor: pointer;
             width: 100%;
-            font-weight: bold;
-            transition: background-color 0.3s;
+            font-weight: 600;
+            transition: background-color 0.2s;
             margin-top: 10px;
         }
         button:hover {
-            background-color: #c00042;
+            background-color: #be0041;
         }
         button:disabled {
-            background-color: #ccc;
+            background-color: #94a3b8;
             cursor: not-allowed;
         }
         #loading {
             display: none;
             text-align: center;
-            margin: 20px 0;
-            font-weight: bold;
+            margin: 25px 0;
+            font-weight: 600;
             color: var(--vives-red);
         }
         .spinner {
-            border: 4px solid #f3f3f3;
+            border: 4px solid #e2e8f0;
             border-top: 4px solid var(--vives-red);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             animation: spin 1s linear infinite;
             margin: 0 auto 15px auto;
         }
@@ -143,38 +172,211 @@
         #result-card {
             display: none;
         }
-        #result-content {
-            background-color: #fafafa;
-            padding: 25px;
-            border-radius: 5px;
-            border: 1px solid #e0e0e0;
+
+        /* --- PROFESSIONELE RAPPORT OPMAAK --- */
+        .report-header-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 3px solid var(--vives-red);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
-        #result-content h3 {
+        .report-header-banner h2 {
+            border: none;
+            padding: 0;
+            margin: 0;
+            color: var(--vives-red);
+            font-size: 1.6em;
+        }
+        .report-header-banner .sub-brand {
+            font-size: 0.85em;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .report-header-banner #report-date {
+            font-size: 0.9em;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        /* Status samenvattingsbalk */
+        .summary-pills {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+        }
+        .summary-pill {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .pill-green { background-color: var(--green-bg); color: var(--green-text); border: 1px solid #bbf7d0; }
+        .pill-orange { background-color: var(--orange-bg); color: var(--orange-text); border: 1px solid #fde68a; }
+        .pill-red { background-color: var(--red-bg); color: var(--red-text); border: 1px solid #fecaca; }
+
+        /* Dossier Tabel */
+        #result-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+            background: #f8fafc;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+        }
+        #result-content th, #result-content td {
+            padding: 11px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.95em;
+            vertical-align: top;
+        }
+        #result-content th {
+            background-color: #f1f5f9;
+            color: #1e293b;
+            font-weight: 700;
+            width: 30%;
+            border-right: 1px solid #e2e8f0;
+        }
+        #result-content tr:last-child th,
+        #result-content tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Introductiekader */
+        .intro-block {
+            background-color: #f8fafc;
+            border-left: 4px solid var(--vives-dark);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 24px;
+            color: #1e293b;
+        }
+        .intro-block p {
+            margin: 0 0 8px 0;
+        }
+        .intro-block p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Individuele Feedback Kaarten */
+        .feedback-section {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-left: 6px solid #94a3b8;
+            border-radius: 8px;
+            padding: 18px 22px;
+            margin-bottom: 18px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+        .feedback-section.status-green { border-left-color: var(--green-border); }
+        .feedback-section.status-orange { border-left-color: var(--orange-border); }
+        .feedback-section.status-red { border-left-color: var(--red-border); }
+        
+        .feedback-section h3 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 1.15em;
             color: var(--vives-dark);
-            margin-top: 25px;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
+        .badge {
+            font-size: 0.75em;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .badge-green { background-color: var(--green-bg); color: var(--green-text); }
+        .badge-orange { background-color: var(--orange-bg); color: var(--orange-text); }
+        .badge-red { background-color: var(--red-bg); color: var(--red-text); }
+
+        .feedback-section ul, .feedback-section ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .feedback-section li {
+            margin-bottom: 8px;
+        }
+        .feedback-section li:last-child {
+            margin-bottom: 0;
         }
         .print-btn {
             background-color: var(--vives-dark);
             margin-top: 20px;
         }
         .print-btn:hover {
-            background-color: #111;
+            background-color: #0f172a;
+        }
+
+        /* --- PRINT & PDF EXPORT STYLING --- */
+        @media print {
+            body {
+                background-color: #ffffff;
+                padding: 0;
+                font-size: 10.5pt;
+            }
+            .container {
+                max-width: 100%;
+                width: 100%;
+            }
+            .no-print {
+                display: none !important;
+            }
+            #result-card {
+                box-shadow: none;
+                padding: 0;
+                margin: 0;
+            }
+            .feedback-section {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                border: 1px solid #cbd5e1;
+                border-left-width: 6px;
+                margin-bottom: 14px;
+                padding: 14px 18px;
+            }
+            .badge, .summary-pill, .intro-block, #result-content th, .feedback-section {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">
+    <!-- Hoofding van de Web-app (verdwijnt bij printen) -->
+    <div class="header no-print">
         <h1>VIVES Didactische Coach Geschiedenis</h1>
         <p>Upload je lesvoorbereiding, presentatie en werkblad (als PDF) voor formatieve feedback.</p>
     </div>
 
-    <!-- API & Instellingen -->
-    <div class="card">
-        <h2>1. Instellingen</h2>
+    <!-- 1. Instellingen & Context (verdwijnt bij printen) -->
+    <div class="card no-print">
+        <h2>1. Instellingen & Context</h2>
         <div class="form-group">
             <label for="apiKey">Jouw Gemini API Key</label>
             <input type="password" id="apiKey" placeholder="Plak hier je Google Gemini API Key...">
@@ -182,9 +384,9 @@
             <div class="info-box">
                 <strong>Hoe maak je een gratis API-sleutel aan?</strong><br>
                 1. Klik op <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">deze link naar Google AI Studio</a>.<br>
-                2. Log in met een Google-account. <em>(Let op: Blokkeert je VIVES-mail de toegang? Gebruik dan gewoon een persoonlijk @gmail.com account!)</em><br>
-                3. Klik op de blauwe knop 'Create API key' (en eventueel op 'Create API key in new project').<br>
-                4. Kopieer de lange reeks letters en cijfers en plak deze hierboven. Je sleutel wordt uitsluitend lokaal in jouw browser bewaard.
+                2. Log in met een Google-account. <em>(Blokkeert je VIVES-mail de toegang? Gebruik dan een persoonlijk @gmail.com account!)</em><br>
+                3. Klik op de blauwe knop 'Create API key'.<br>
+                4. Kopieer de sleutel en plak deze hierboven. Je sleutel wordt uitsluitend lokaal in jouw browser bewaard.
             </div>
         </div>
         
@@ -193,13 +395,30 @@
             <select id="stageLevel">
                 <option value="Stage 1 (1ste jaar)">Stage 1 (1ste jaar - Verkennend, mild & coachend)</option>
                 <option value="Stage 2 (2de jaar)" selected>Stage 2 (2de jaar - Standaard norm & coachend)</option>
-                <option value="Stage 3 (3de jaar)">Stage 3 / LIO (3de jaar - Strikte, professionele norm)</option>
+                <option value="Stage 3 / LIO (3de jaar)">Stage 3 / LIO (3de jaar - Strikte, professionele norm)</option>
             </select>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="studentName">Naam student(e) <span class="optional-tag">(optioneel)</span></label>
+                <input type="text" id="studentName" placeholder="Wordt anders automatisch uit PDF gelezen...">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="draftVersion">Versie / Context <span class="optional-tag">(optioneel)</span></label>
+                <select id="draftVersion">
+                    <option value="">-- Automatisch / Niet gespecificeerd --</option>
+                    <option value="Draft 1 (Eerste ontwerp)">Draft 1 (Eerste ontwerp)</option>
+                    <option value="Draft 2 (Herwerkte versie na feedback)">Draft 2 (Herwerkte versie na feedback)</option>
+                    <option value="Microteaching (Les aan medestudenten)">Microteaching (Les aan medestudenten)</option>
+                    <option value="Definitieve stageversie">Definitieve stageversie</option>
+                </select>
+            </div>
         </div>
     </div>
 
-    <!-- Bestanden Uploaden -->
-    <div class="card">
+    <!-- 2. Bestanden Uploaden (verdwijnt bij printen) -->
+    <div class="card no-print">
         <h2>2. Jouw Dossier (Enkel PDF bestanden)</h2>
         <div class="form-group">
             <label>Lesvoorbereiding (LV)</label>
@@ -214,31 +433,36 @@
             <label>Werkblad / Werkbundel (WB)</label>
             <input type="file" id="fileWB" accept="application/pdf">
         </div>
-        <button id="generateBtn" onclick="generateFeedback()">Genereer Feedback</button>
+        <button id="generateBtn" onclick="generateFeedback()">Genereer Feedbackrapport</button>
     </div>
 
     <!-- Loading State -->
-    <div id="loading">
+    <div id="loading" class="no-print">
         <div class="spinner"></div>
         <p>De AI-coach analyseert je bestanden, bestudeert de rode draad en trianguleert de didactiek...<br>Even geduld!</p>
     </div>
 
-    <!-- Resultaat -->
+    <!-- 3. Resultaat (Enkel dit blok wordt afgedrukt op de PDF) -->
     <div class="card" id="result-card">
-        <h2>3. Jouw Feedbackrapport</h2>
+        <div class="report-header-banner">
+            <div>
+                <span class="sub-brand">VIVES Hogeschool &bull; Lerarenopleiding Secundair Onderwijs</span>
+                <h2>Formatief Feedbackrapport Geschiedenis</h2>
+            </div>
+            <span id="report-date"></span>
+        </div>
+        <div id="summary-bar" class="summary-pills"></div>
         <div id="result-content"></div>
-        <button class="print-btn" onclick="window.print()">Sla dit rapport op als PDF / Afdrukken</button>
+        <button class="print-btn no-print" onclick="window.print()">Sla dit rapport op als PDF / Afdrukken</button>
     </div>
 </div>
 
 <script>
-    // Laad de lokaal opgeslagen API key bij het openen van de pagina
     document.addEventListener("DOMContentLoaded", () => {
         const savedKey = localStorage.getItem("vivesGeminiKey");
         if(savedKey) document.getElementById("apiKey").value = savedKey;
     });
 
-    // Helper functie om PDF bestanden om te zetten naar Base64 formaat
     const fileToBase64 = (file) => new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -246,9 +470,77 @@
         reader.onerror = error => reject(error);
     });
 
+    // Vormt de gegenereerde Markdown-HTML om naar gestylede sectiekaarten en telt de status-badges
+    function styleReportHTML(rawHtml) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(rawHtml, 'text/html');
+        const container = document.createElement('div');
+        
+        let currentSection = null;
+        let introBlock = null;
+        let countGreen = 0;
+        let countOrange = 0;
+        let countRed = 0;
+
+        Array.from(doc.body.children).forEach(el => {
+            if (el.tagName === 'H3') {
+                currentSection = document.createElement('div');
+                currentSection.className = 'feedback-section';
+                
+                let titleText = el.innerHTML;
+                let badgeHtml = '';
+
+                if (titleText.includes('[STERK]')) {
+                    currentSection.classList.add('status-green');
+                    titleText = titleText.replace('[STERK]', '').trim();
+                    badgeHtml = '<span class="badge badge-green">Sterk</span>';
+                    countGreen++;
+                } else if (titleText.includes('[VERFIJNING]')) {
+                    currentSection.classList.add('status-orange');
+                    titleText = titleText.replace('[VERFIJNING]', '').trim();
+                    badgeHtml = '<span class="badge badge-orange">Verfijning mogelijk</span>';
+                    countOrange++;
+                } else if (titleText.includes('[WERKPUNT]')) {
+                    currentSection.classList.add('status-red');
+                    titleText = titleText.replace('[WERKPUNT]', '').trim();
+                    badgeHtml = '<span class="badge badge-red">Cruciaal werkpunt</span>';
+                    countRed++;
+                }
+
+                el.innerHTML = `<span>${titleText}</span> ${badgeHtml}`;
+                currentSection.appendChild(el);
+                container.appendChild(currentSection);
+            } else if (currentSection) {
+                currentSection.appendChild(el);
+            } else if (el.tagName === 'TABLE') {
+                container.appendChild(el);
+            } else {
+                // Paragrafen tussen de tabel en de eerste H3 bundelen in een mooi introductiekader
+                if (!introBlock) {
+                    introBlock = document.createElement('div');
+                    introBlock.className = 'intro-block';
+                    container.appendChild(introBlock);
+                }
+                introBlock.appendChild(el);
+            }
+        });
+
+        // Vul de visuele status-samenvattingsbalk bovenaan
+        const summaryBar = document.getElementById("summary-bar");
+        summaryBar.innerHTML = `
+            <div class="summary-pill pill-green">${countGreen}x Sterk</div>
+            <div class="summary-pill pill-orange">${countOrange}x Verfijning mogelijk</div>
+            <div class="summary-pill pill-red">${countRed}x Cruciaal werkpunt</div>
+        `;
+
+        return container.innerHTML;
+    }
+
     async function generateFeedback() {
         const apiKey = document.getElementById("apiKey").value.trim();
         const stageLevel = document.getElementById("stageLevel").value;
+        const studentNameInput = document.getElementById("studentName").value.trim();
+        const draftVersionInput = document.getElementById("draftVersion").value;
         const fileLV = document.getElementById("fileLV").files[0];
         const filePPT = document.getElementById("filePPT").files[0];
         const fileWB = document.getElementById("fileWB").files[0];
@@ -258,14 +550,11 @@
         const resultCard = document.getElementById("result-card");
         const resultContent = document.getElementById("result-content");
 
-        // Validatie
         if(!apiKey) return alert("Vul alsjeblieft je Gemini API Key in.");
-        if(!fileLV || !filePPT || !fileWB) return alert("Upload alle 3 de bestanden (Lesvoorbereiding, Presentatie, Werkblad) als PDF om een correcte triangulatie te kunnen maken.");
+        if(!fileLV || !filePPT || !fileWB) return alert("Upload alle 3 de bestanden (Lesvoorbereiding, Presentatie, Werkblad) als PDF.");
 
-        // Sla de API-sleutel lokaal op voor een volgend bezoek
         localStorage.setItem("vivesGeminiKey", apiKey);
 
-        // UI updaten naar 'Laden'
         btn.disabled = true;
         btn.innerText = "Analyseren...";
         loading.style.display = "block";
@@ -273,92 +562,113 @@
         resultContent.innerHTML = "";
 
         try {
-            // Zet de drie PDF's om naar Base64
             const b64_LV = await fileToBase64(fileLV);
             const b64_PPT = await fileToBase64(filePPT);
             const b64_WB = await fileToBase64(fileWB);
 
-            // De uitgebreide, formatieve Systeemprompt met ingebakken VIVES-didactiek
-            const systemInstruction = `Jij bent een coachende, motiverende vakdidacticus geschiedenis en stagebegeleider (verbonden aan VIVES Hogeschool). Jouw taak is het geven van formatieve, opbouwende feedback op draftversies van stagevoorbereidingen. Jouw doel is de student te helpen om het lesmateriaal bij te sturen en te versterken vóór de definitieve indiening. Je velt géén finaal oordeel, maar reikt handvatten aan.
+            const studentContextRule = studentNameInput 
+                ? `De opgegeven naam van de student is: "${studentNameInput}". Gebruik deze naam in de tabel en de aanspreking.`
+                : `Haal de naam van de student(e) uit de hoofding van de lesvoorbereiding. Als er geen naam in het document staat, gebruik dan "Student(e)".`;
 
-            Toon en Stijl:
-            - Spreek de student rechtstreeks en professioneel aan ('je/jij').
-            - Benoem expliciet wat al goed zit.
-            - Formuleer werkpunten als "feed forward" ("Probeer in je volgende versie...", "Een tip om dit te versterken is..."). Vermijd harde woorden als 'fout' of 'tekortkoming'.
+            const draftContextRule = draftVersionInput
+                ? `De opgegeven versie/context is: "${draftVersionInput}".`
+                : `Geen specifieke draftversie opgegeven (noteer "Standaard draft" of leid uit het document af of het om microteaching gaat).`;
+
+            const systemInstruction = `Jij bent een coachende, motiverende vakdidacticus geschiedenis en stagebegeleider aan VIVES Hogeschool. Je geeft formatieve, opbouwende feedback op draftversies van lesvoorbereidingen zodat de student het lesmateriaal kan versterken vóór de definitieve indiening.
+
+            STRIKTE OPMAAKREGELS:
+            1. Gebruik NOOIT LaTeX of wiskundige code (zoals $ of \\prime). Schrijf berekeningen en minuten gewoon als platte tekst: bv. (3 min + 7 min + 5 min = 55 minuten).
+            2. Gebruik GEEN emoji's in de titels. Gebruik bij de titels 1 t.e.m. 9 uitsluitend één van deze drie exacte tekstlabels tussen vierkante haken: [STERK], [VERFIJNING], of [WERKPUNT].
+            3. Wees uiterst concreet: verwijs naar exacte paginanummers, dianummers, bronnummers en korte citaten uit de documenten van de student.
+
+            SPECIFIEKE REGEL VOOR MICROTEACHING & KLASGEGEVENS:
+            - ${studentContextRule}
+            - ${draftContextRule}
+            - Belangrijk: Bij microteaching geven studenten les aan medestudenten. Ze hoeven dan GEEN stageschool, stagementor, klasprofiel of lokaaluitrusting in te vullen in de hoofding van hun lesvoorbereiding. Reken hen dus NOOIT af op ontbrekende school-, klas- of lokaalgegevens! Beoordeel de les op basis van het onderwerp en de beoogde graad/doelgroep van het leerplan.
 
             Niveaubepaling & Kalibratie (Stageniveau: ${stageLevel}):
-            - Indien Stage 1: Wees zeer aanmoedigend. Focus op grote lijnen (is er een onderzoeksvraag, klopt de basisstructuur, wordt er met bronnen gewerkt?). Zie kleine vormfoutjes door de vingers.
-            - Indien Stage 2: Verwacht een vlottere toepassing van Contextualisering-Translatie-Interpretatie (C-T-I) en een goede triangulatie tussen documenten. Stuur coachend bij.
-            - Indien Stage 3 / LIO: Daag de student uit als beginnende collega. Verwacht vakdidactische diepgang, perfecte historische nuance en een strikte toepassing van de 35-puntenchecklist.
+            - Stage 1: Zeer aanmoedigend. Focus op grote lijnen (onderzoeksvraag, basisstructuur, bronnengebruik).
+            - Stage 2: Verwacht vlotte toepassing van C-T-I (Contextualisering-Translatie-Interpretatie), haalbare timing en strikte triangulatie tussen documenten.
+            - Stage 3 / LIO: Daag uit als beginnende collega. Verwacht vakdidactische diepgang, scherpe historische nuance en strikte toepassing van de 35-puntenchecklist.
 
-            Hanteer deze onzichtbare VIVES-didactiek als je referentiekader (je hoeft deze regels niet uit te leggen, gebruik ze enkel als meetlat):
-            - Fiche 2: Voldoende historische expertise in de voorbereiding; relevante bronnen, minstens 2 werken in literatuurlijst.
-            - Fiche 3: Duidelijke, actuele en uitdagende onderzoeksvraag (geen simpele ja/nee) geformuleerd in eigen woorden, sturend voor de hele les.
-            - Fiche 4 & 8 (Lesstructuur & Triangulatie): Een heldere inhoudstafel (op twee niveaus) die 1-op-1 exact doorgetrokken wordt in de Wat-kolom, Hoe-kolom, het werkblad en de presentatie.
-            - Fiche 5 (Lesdoelen): Doelen in eigen woorden, onderverdeeld in kennen/kunnen, vaardigheden, attitudes. Ze bevatten een observeerbare handeling en een inhoud.
-            - Fiche 4 (Wat-kolom): Leerinhoud volledig en structureel uitgeschreven in tekstvorm, zonder te verwijzen naar werkvormen of bronnen (dat hoort in kolom 4).
-            - Fiche 6 & 7 (Hoe-kolom & Variatie): Bronnen worden systematisch behandeld via C-T-I (Contextualisering, Translatie, Interpretatie). Gevarieerde werkvormen en brontypes.
-            - Fiche 8 (Werkblad): Bevat bindteksten (voor/na titels), voldoende schrijfruimte voor de leerlingen (niet al ingevuld), de onderzoeksvraag bovenaan en alle niet-handboek bronnen.
-            - Fiche 8 (Presentatie): Functie 1 Structureren (linkerkolom bouwt op, wisselende kleuren). Functie 2 Visualiseren (1 bron per dia, zo groot mogelijk, geen lappen tekst). Functie 3 Controleren (dia's met de opdrachten en verwachte antwoorden voor notities).
-            - 35-Puntenchecklist: Let op timing, situering in tijd/ruimte, taal- en spelfouten, en bronvermeldingen.
+            VIVES-didactiek referentiekader (gebruik als meetlat):
+            - Fiche 2: Inhoudelijke expertise; correct onderscheid primaire/secundaire bronnen; minstens 2 werken in literatuurlijst.
+            - Fiche 3: Uitdagende onderzoeksvraag (geen ja/nee) in eigen woorden, 1-op-1 identiek geformuleerd in LV, PPT en WB.
+            - Fiche 4 & 8 (Triangulatie): Inhoudstafel op 2 niveaus (1.1, 1.2...) moet letterlijk (elk woord en cijfer) identiek zijn in de Wat-kolom, Hoe-kolom, linkerkolom van de PPT en op het WB.
+            - Fiche 5 (Lesdoelen): In eigen woorden (kennis/inzicht, vaardigheden, attitudes) met observeerbare handeling en inhoud, op de juiste plaats gekoppeld in kolom 2.
+            - Fiche 4 (Wat-kolom): Volledig uitgeschreven in doorlopende tekst/zinnen, zonder verwijzing naar werkvormen of bronnummers.
+            - Fiche 6 & 7 (Hoe-kolom & Timing): Systematische bronnenbehandeling via C-T-I. Tel alle deelminuten in de Hoe-kolom op en controleer of de les binnen de geplande lestijd past (hanteer "less is more", max 3 à 4 kernbronnen per lesuur van 50 min).
+            - Fiche 8 (Werkblad): Bevat onderzoeksvraag bovenaan, korte verhalende bindteksten tussen titels/opdrachten, alle niet-handboekbronnen (zeker leesteksten) en voldoende schrijfruimte.
+            - Fiche 8 (Presentatie): Functie 1 Structureren (linkerkolom bouwt op met kleurmarkering). Functie 2 Visualiseren (1 bron zo groot mogelijk per dia, geen lange leesteksten op slides). Functie 3 Controleren (verbetersleutel/antwoorden tonen). Check op resttekst of typfouten.
 
-            Jouw Evaluatieopdracht & Outputstructuur:
-            Geef je feedback exact in de onderstaande structuur met 9 punten. Gebruik Markdown voor opmaak. Start elke titel (punt 1 t.e.m. 8) verplicht met één van deze emoji's om visueel prioriteit te geven: 
-            🟢 (Sterk, hoogstens kleine rimpel), 🟠 (Verfijning mogelijk, didactisch strakker trekken), of 🔴 (Cruciaal aandachtspunt voor werkbaarheid).
+            VERPLICHTE OUTPUTSTRUCTUUR (volg dit exact in Markdown):
 
-            ### [Kleurcode] 1. Inhoudelijke Expertise & Bronnen (Fiche 2)
-            * **Observatie:** [Korte observatie]
-            * **Tip voor de draft:** [Coachende feed-forward]
+            | Dossieroverzicht | Gegevens uit ingediend dossier |
+            | :--- | :--- |
+            | **Student(e)** | [Naam van de student] |
+            | **Stageniveau & Versie** | ${stageLevel} ${draftVersionInput ? '— ' + draftVersionInput : ''} |
+            | **Lesonderwerp & Situering** | [Onderwerp + tijdvak/ruimte uit document halen] |
+            | **Centrale Onderzoeksvraag** | [De centrale onderzoeksvraag uit het dossier] |
+            | **Doelgroep / Context** | [Vermeld graad/leerjaar/finaliteit of geef aan "Microteaching (medestudenten)"] |
+            | **Tijdsanalyse (Timing)** | [Geplande lestijd in hoofding vs. opgetelde som van de deelminuten in de Hoe-kolom] |
 
-            ### [Kleurcode] 2. De Onderzoeksvraag (Fiche 3)
-            * **Observatie:** [Korte observatie]
-            * **Tip voor de draft:** [Coachende feed-forward]
+            Dag [Voornaam student],
 
-            ### [Kleurcode] 3. Lesstructuur & Triangulatie (Fiche 4 & 8)
-            * **Observatie:** [Korte observatie]
-            * **Tip voor de draft:** [Coachende feed-forward]
+            [Schrijf hier een korte, warme en motiverende alinea waarin je de sterke rode draad benoemt en de belangrijkste focuspunten voor dit stageniveau en deze draft samenvat.]
 
-            ### [Kleurcode] 4. Lesdoelen (Fiche 5)
-            * **Observatie:** [Korte observatie]
-            * **Tip voor de draft:** [Coachende feed-forward]
+            ### [Kleurcode-tag] 1. Inhoudelijke Expertise & Bronnen (Fiche 2)
+            * **Observatie:** [Concrete analyse met verwijzing naar bronnen/pagina's]
+            * **Tip voor de draft:** [Concrete, coachende feed-forward]
 
-            ### [Kleurcode] 5. De Wat-kolom (Fiche 4)
-            * **Observatie:** [Korte observatie]
-            * **Tip voor de draft:** [Coachende feed-forward]
+            ### [Kleurcode-tag] 2. De Onderzoeksvraag (Fiche 3)
+            * **Observatie:** [Concrete analyse en vergelijking formulering tussen LV, PPT en WB]
+            * **Tip voor de draft:** [Concrete feed-forward]
 
-            ### [Kleurcode] 6. De Hoe-kolom: Didactische Kern & Bronnenbehandeling (Fiche 6 & 7)
-            * **Observatie:** [Korte observatie]
-            * **Tip voor de draft:** [Coachende feed-forward]
+            ### [Kleurcode-tag] 3. Lesstructuur & Triangulatie (Fiche 4 & 8)
+            * **Observatie:** [Vergelijk titels/nummering exact tussen LV, PPT en WB]
+            * **Tip voor de draft:** [Concrete feed-forward]
 
-            ### [Kleurcode] 7. Het Werkblad (Fiche 8)
-            * **Observatie:** [Korte observatie]
-            * **Tip voor de draft:** [Coachende feed-forward]
+            ### [Kleurcode-tag] 4. Lesdoelen (Fiche 5)
+            * **Observatie:** [Concrete analyse van driedeling, formulering en koppeling aan LPD's]
+            * **Tip voor de draft:** [Concrete feed-forward]
 
-            ### [Kleurcode] 8. De Lespresentatie (Fiche 8)
-            * **Observatie:** [Korte observatie]
-            * **Tip voor de draft:** [Coachende feed-forward]
+            ### [Kleurcode-tag] 5. De Wat-kolom (Fiche 4)
+            * **Observatie:** [Concrete analyse van volledigheid en doorlopende tekstvorm]
+            * **Tip voor de draft:** [Concrete feed-forward]
 
-            ### 9. Extra tips uit de 35-puntenchecklist
-            * **Feedback:** [Geef hier nog max 2-3 extra, aanmoedigende tips]`;
+            ### [Kleurcode-tag] 6. De Hoe-kolom: Didactische Kern, Timing & Bronnenbehandeling (Fiche 6 & 7)
+            * **Observatie:** [Analyseer C-T-I, variatie en tel de minuten in platte tekst op]
+            * **Tip voor de draft:** [Concrete feed-forward]
+
+            ### [Kleurcode-tag] 7. Het Werkblad (Fiche 8)
+            * **Observatie:** [Check bindteksten, bronnen op werkblad en schrijfruimte]
+            * **Tip voor de draft:** [Concrete feed-forward]
+
+            ### [Kleurcode-tag] 8. De Lespresentatie (Fiche 8)
+            * **Observatie:** [Check linkerkolom, tekstblokken op slides en controleerdia's]
+            * **Tip voor de draft:** [Concrete feed-forward]
+
+            ### [VERFIJNING] 9. Extra tips uit de 35-puntenchecklist
+            * **Tijd- en ruimtesituering:** [Specifieke feedback op kaart/tijdlijn]
+            * **Taalverzorging & Lay-out:** [Specifieke spel- of tikfouten met exact paginanummer/dianummer vermelden]`;
 
             const payload = {
                 systemInstruction: { parts: [{ text: systemInstruction }] },
                 contents: [{
                     role: "user",
                     parts: [
-                        { text: `Hier is het studentendossier. Stageniveau: ${stageLevel}.\nDit is bestand 1 (Lesvoorbereiding):` },
+                        { text: `Hier is het studentendossier. Stageniveau: ${stageLevel}. Opgegeven naam: ${studentNameInput || 'Haal uit PDF'}. Opgegeven versie: ${draftVersionInput || 'Standaard'}.\nBestand 1 (Lesvoorbereiding):` },
                         { inlineData: { mimeType: "application/pdf", data: b64_LV } },
-                        { text: `Dit is bestand 2 (Presentatie):` },
+                        { text: `Bestand 2 (Presentatie):` },
                         { inlineData: { mimeType: "application/pdf", data: b64_PPT } },
-                        { text: `Dit is bestand 3 (Werkblad):` },
+                        { text: `Bestand 3 (Werkblad):` },
                         { inlineData: { mimeType: "application/pdf", data: b64_WB } },
-                        { text: `Evalueer dit studentendossier streng maar rechtvaardig op de inhoud, maar wees coachend en opbouwend in je bewoordingen. Zorg dat de 9-delige structuur met emoji's exact gerespecteerd wordt.` }
+                        { text: `Evalueer dit studentendossier grondig en pas exact de gevraagde tabel en 9-delige structuur met [STERK], [VERFIJNING] of [WERKPUNT] toe, zonder LaTeX-tekens.` }
                     ]
                 }],
                 generationConfig: { temperature: 0.2 } 
             };
 
-            // INTELLIGENTE FALLBACK: Probeer eerst de nieuwste flash, valt deze door drukte uit, pak direct de stabiele pro
             let response;
             try {
                 response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
@@ -367,10 +677,9 @@
                     body: JSON.stringify(payload)
                 });
             } catch (e) {
-                console.log("Flash overbelast, schakel over op fallback...");
+                console.log("Primair model niet bereikbaar, schakel over op fallback...");
             }
 
-            // Als flash faalt of overbelast is, roepen we direct de stabiele pro-reserve aan
             if (!response || !response.ok) {
                 response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`, {
                     method: "POST",
@@ -386,20 +695,23 @@
             }
 
             const markdownResponse = data.candidates[0].content.parts[0].text;
+            const rawHtml = marked.parse(markdownResponse);
             
-            resultContent.innerHTML = marked.parse(markdownResponse);
+            const today = new Date().toLocaleDateString('nl-BE', { day: '2-digit', month: 'long', year: 'numeric' });
+            document.getElementById("report-date").innerText = `Gegenereerd op ${today}`;
+            resultContent.innerHTML = styleReportHTML(rawHtml);
             
             loading.style.display = "none";
             resultCard.style.display = "block";
             btn.disabled = false;
-            btn.innerText = "Genereer Feedback";
+            btn.innerText = "Genereer Feedbackrapport";
             resultCard.scrollIntoView({ behavior: 'smooth' });
 
         } catch (error) {
             alert("Er is een fout opgetreden: " + error.message);
             loading.style.display = "none";
             btn.disabled = false;
-            btn.innerText = "Genereer Feedback";
+            btn.innerText = "Genereer Feedbackrapport";
         }
     }
 </script>
