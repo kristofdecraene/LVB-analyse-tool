@@ -232,13 +232,13 @@
 </div>
 
 <script>
-    // Laad de lokaal opgeslagen API key bij het openen van de pagina
+// Laad de lokaal opgeslagen API key bij het openen van de pagina
     document.addEventListener("DOMContentLoaded", () => {
         const savedKey = localStorage.getItem("vivesGeminiKey");
         if(savedKey) document.getElementById("apiKey").value = savedKey;
     });
 
-    // Helper functie om PDF bestanden om te zetten naar Base64 formaat (nodig voor de Gemini API)
+    // Helper functie om PDF bestanden om te zetten naar Base64 formaat
     const fileToBase64 = (file) => new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -258,14 +258,11 @@
         const resultCard = document.getElementById("result-card");
         const resultContent = document.getElementById("result-content");
 
-        // Validatie
         if(!apiKey) return alert("Vul alsjeblieft je Gemini API Key in.");
-        if(!fileLV || !filePPT || !fileWB) return alert("Upload alle 3 de bestanden (Lesvoorbereiding, Presentatie, Werkblad) als PDF om een correcte triangulatie te kunnen maken.");
+        if(!fileLV || !filePPT || !fileWB) return alert("Upload alle 3 de bestanden als PDF.");
 
-        // Sla de API-sleutel lokaal op voor een volgend bezoek
         localStorage.setItem("vivesGeminiKey", apiKey);
 
-        // UI updaten naar 'Laden'
         btn.disabled = true;
         btn.innerText = "Analyseren...";
         loading.style.display = "block";
@@ -273,12 +270,33 @@
         resultContent.innerHTML = "";
 
         try {
-            // Zet de drie PDF's om naar Base64
+            // 1. AUTO-DISCOVERY: Haal dynamisch het juiste, werkende model op voor deze API-sleutel
+            const modelsResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+            const modelsData = await modelsResponse.json();
+            
+            if (!modelsResponse.ok) {
+                throw new Error("API Sleutel ongeldig of geen toegang tot de modellenlijst.");
+            }
+
+            // Filter op modellen die 'gemini-1.5-pro' heten en content genereren ondersteunen
+            const availableProModels = modelsData.models.filter(m => 
+                m.name.includes("gemini-1.5-pro") && 
+                m.supportedGenerationMethods.includes("generateContent")
+            );
+
+            if (availableProModels.length === 0) {
+                throw new Error("Er is momenteel geen Gemini Pro model beschikbaar voor jouw API-sleutel in deze regio.");
+            }
+
+            // Pak automatisch de naam van het eerste werkende model (bv. 'models/gemini-1.5-pro-002')
+            const activeModel = availableProModels[0].name;
+
+            // 2. Bestanden omzetten
             const b64_LV = await fileToBase64(fileLV);
             const b64_PPT = await fileToBase64(filePPT);
             const b64_WB = await fileToBase64(fileWB);
 
-            // De uitgebreide, formatieve Systeemprompt met ingebakken VIVES-didactiek
+            // 3. De formatieve VIVES Systeemprompt
             const systemInstruction = `Jij bent een coachende, motiverende vakdidacticus geschiedenis en stagebegeleider (verbonden aan VIVES Hogeschool). Jouw taak is het geven van formatieve, opbouwende feedback op draftversies van stagevoorbereidingen. Jouw doel is de student te helpen om het lesmateriaal bij te sturen en te versterken vóór de definitieve indiening. Je velt géén finaal oordeel, maar reikt handvatten aan.
 
             Toon en Stijl:
@@ -339,9 +357,8 @@
             * **Tip voor de draft:** [Coachende feed-forward]
 
             ### 9. Extra tips uit de 35-puntenchecklist
-            * **Feedback:** [Geef hier nog max 2-3 extra, aanmoedigende tips (bv. timing, bordschema, taal) om de draft nog professioneler te maken.]`;
+            * **Feedback:** [Geef hier nog max 2-3 extra, aanmoedigende tips]`;
 
-            // Payload constructie voor Gemini 1.5 Pro met de juiste versie aanduiding
             const payload = {
                 systemInstruction: { parts: [{ text: systemInstruction }] },
                 contents: [{
@@ -356,13 +373,11 @@
                         { text: `Evalueer dit studentendossier streng maar rechtvaardig op de inhoud, maar wees coachend en opbouwend in je bewoordingen. Zorg dat de 9-delige structuur met emoji's exact gerespecteerd wordt.` }
                     ]
                 }],
-                generationConfig: { 
-                    temperature: 0.2 // Lage temperatuur voor consistente didactische evaluatie
-                } 
+                generationConfig: { temperature: 0.2 } 
             };
 
-            // Call de Gemini API met gemini-1.5-pro-latest (Verhelpt de API versioning fout)
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${apiKey}`, {
+            // 4. Roep de API aan met het dynamisch gevonden model
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/${activeModel}:generateContent?key=${apiKey}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
@@ -371,22 +386,17 @@
             const data = await response.json();
 
             if(!response.ok) {
-                // Foutafhandeling als de API weigert (bv. foute sleutel of quotum bereikt)
                 throw new Error(data.error?.message || "Er ging iets mis bij de verbinding met de Gemini API.");
             }
 
             const markdownResponse = data.candidates[0].content.parts[0].text;
             
-            // Render de Markdown als HTML in de result-div
             resultContent.innerHTML = marked.parse(markdownResponse);
             
-            // Toon de output kaart en verberg de lader
             loading.style.display = "none";
             resultCard.style.display = "block";
             btn.disabled = false;
             btn.innerText = "Genereer Feedback";
-
-            // Scroll soepel naar de resultaten
             resultCard.scrollIntoView({ behavior: 'smooth' });
 
         } catch (error) {
